@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import model.Region;
+import repository.RegionRepository;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -11,67 +12,57 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-public class RegionRepositoryImpl {
+public class RegionRepositoryImpl implements RegionRepository {
 
     private final String regionFile = "src/main/resources/regions.json";
-    private static RegionRepositoryImpl regionRepository;
 
-
-    public List<Region> getById(Long id) {
-        return (List<Region>) getAll().stream()
-                .filter((s) -> s.getId().equals(id)).collect(Collectors.toList());
-     /*   return getAll().stream()
+    @Override
+    public Region getById(Long id) throws IOException {
+        return getAll().stream()
                 .filter(u -> u.getId().equals(id))
                 .findFirst()
-                .orElse(null);*/
+                .orElse(null);
     }
 
-
-    public List<Region> getAll() {
+    @Override
+    public List<Region> getAll() throws IOException {
         return readJSON();
     }
 
-
-    public Region save(Long id, String name) throws IOException {
-        List<Region> regions = getAll();
-        Region region = new Region(id, name);
-        regions.add(region);
+    @Override
+    public void save(Long id, String name) throws IOException {
+        List<Region> regions = readJSON();
+        regions.add(new Region(id, name));
         writeJSON(regions);
-        return region;
     }
 
+    @Override
     public void update(Long id, String name) throws IOException {
         deleteById(id);
         save(id, name);
     }
 
-
-
+    @Override
     public void deleteById(Long id) throws IOException {
-        List<Region> regions = getAll();
+        List<Region> regions = readJSON();
         regions.removeIf(s -> s.getId().equals(id));
         writeJSON(regions);
     }
 
-    public void writeJSON(List<Region> regions) throws IOException {
+    private void writeJSON(List<Region> regions) throws IOException {
         try (Writer writer = Files.newBufferedWriter(Path.of(regionFile), StandardCharsets.UTF_8)) {
             Gson gson = new Gson();
             gson.toJson(regions, writer);
         }
     }
 
-    public List<Region> readJSON() {
+    private List<Region> readJSON() throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(regionFile))) {
             List<Region> regions = new ArrayList<>();
             regions = new GsonBuilder().create().fromJson(reader, new TypeToken<List<Region>>() {
             }.getType());
             return regions;
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-        return null;
     }
-
 }
