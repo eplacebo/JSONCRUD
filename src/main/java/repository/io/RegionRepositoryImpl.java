@@ -40,7 +40,7 @@ public class RegionRepositoryImpl implements RegionRepository {
     @Override
     public void update(Long id, String name) throws IOException {
         deleteById(id);
-        save(id, name);
+        save(id,name);
     }
 
     @Override
