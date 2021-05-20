@@ -1,4 +1,4 @@
-package View;
+package view;
 
 import controller.RegionController;
 
@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class RegionView {
@@ -16,7 +17,9 @@ public class RegionView {
     private model.Region region;
 
 
-    public void menuRegion() throws IOException {
+    public void menuRegion() throws IOException, InterruptedException {
+
+
         System.out.println("   *******REGIONS*******");
         System.out.println("Choose from these choices:\n" +
                 "1. Get by ID\n" +
@@ -31,27 +34,31 @@ public class RegionView {
         switch (selection) {
             case (1):
                 getID();
-                break;
+                backToMenu();
             case (2):
                 deleteById();
-                break;
+                backToMenu();
             case (3):
                 save();
-                break;
+                backToMenu();
             case (4):
                 update();
-                break;
+                backToMenu();
             case (5):
                 getAll();
-                break;
+                backToMenu();
             case (6):
                 System.exit(0);
             default:
                 System.out.println("Input error");
-
+                backToMenu();
         }
     }
 
+    private void backToMenu() throws IOException, InterruptedException {
+        TimeUnit.SECONDS.sleep(3);
+        menuRegion();
+    }
 
     private void printResult(List<model.Region> regions) {
         Collections.reverse(regions);
@@ -59,7 +66,7 @@ public class RegionView {
                 .sorted(model.Region::compareTo)
                 .sorted(Comparator.reverseOrder())
                 .collect(Collectors.toList())
-                .toString().replace("[", "").replace(",", "").replace("]", ""));
+                .toString().replace("[", "").replace(",", "").replace("]", "") + "\n");
     }
 
     public void getAll() throws IOException {
@@ -69,34 +76,49 @@ public class RegionView {
     public void getID() {
         System.out.println("Enter ID");
         long getID = scanner.nextLong();
-        System.out.println(regionController.getByIdRegion(getID));
+        System.out.println();
+        if (regionController.getByIdRegion(getID) == null) {
+            System.out.println("Not found");
+        } else System.out.println(regionController.getByIdRegion(getID) + "\n");
     }
 
     public void deleteById() throws IOException {
         System.out.println("Enter ID");
         long getID = scanner.nextLong();
-        regionController.deleteByIdRegion(getID);
-        System.out.println("Object deleted");
-        printResult(regionController.getAllRegions());
+        if (regionController.getByIdRegion(getID) == null) {
+            System.out.println("Not found");
+        } else {
+            regionController.deleteByIdRegion(getID);
+            System.out.println("\nObject " + getID + " deleted\n");
+        }
     }
+
 
     public void save() throws IOException {
         System.out.println("Enter ID");
         long getID = scanner.nextLong();
-        System.out.println("Enter name");
-        String name = scanner.nextLine();
-        regionController.saveRegion(getID, name);
-        System.out.println("Object saved");
-        printResult(regionController.getAllRegions());
+        if (regionController.getByIdRegion(getID) != null) {
+            System.out.println("Region with this ID already exists");
+        } else {
+            System.out.println("Enter name");
+            String getName = scanner.next();
+            regionController.saveRegion(getID, getName);
+            System.out.println("\nObject saved\n");
+        }
     }
+
 
     public void update() throws IOException {
         System.out.println("Enter ID");
         Long getID = scanner.nextLong();
-        System.out.println("Enter name");
-        String name = scanner.next();
-        regionController.updateRegion(getID, name);
-        System.out.println("Object updated");
+        if (regionController.getByIdRegion(getID) == null) {
+            System.out.println("Not found");
+        } else {
+            System.out.println("Enter name");
+            String name = scanner.next();
+            regionController.updateRegion(getID, name);
+            System.out.println("\nObject updated\n");
+        }
     }
 }
 
