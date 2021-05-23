@@ -15,6 +15,7 @@ public class RegionController {
 
 
     public List<Region> getAllRegions() throws IOException {
+        System.out.println("ID REGION");
         return regionController.getAll();
     }
 
@@ -31,12 +32,12 @@ public class RegionController {
         regionController.deleteById(id);
     }
 
-    public void saveRegion(Long id, String name) throws IOException {
-      regionController.save(id,name);
+    public Region saveRegion(Long id, String name) throws IOException {
+      return regionController.save(new Region(id,name));
     }
 
     public void updateRegion(Long id, String name) throws IOException {
-        regionController.update(id, name);
+        regionController.update(new Region(id,name));
     }
 
     private void printResult(List<model.Region> regions) {

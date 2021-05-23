@@ -6,7 +6,10 @@ import com.google.gson.reflect.TypeToken;
 import model.Region;
 import repository.RegionRepository;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,9 +20,18 @@ public class RegionRepositoryImpl implements RegionRepository {
 
     private final String regionFile = "src/main/resources/regions.json";
 
+    private static RegionRepositoryImpl regionRepositoryImpl;
+
+    public static RegionRepositoryImpl getRegionRepositoryImp() {
+        if (regionRepositoryImpl == null) {
+            regionRepositoryImpl = new RegionRepositoryImpl();
+        }
+        return regionRepositoryImpl;
+    }
+
     @Override
     public Region getById(Long id) throws IOException {
-        return getAll().stream()
+        return readJSON().stream()
                 .filter(u -> u.getId().equals(id))
                 .findFirst()
                 .orElse(null);
@@ -31,23 +43,27 @@ public class RegionRepositoryImpl implements RegionRepository {
     }
 
     @Override
-    public void save(Long id, String name) throws IOException {
+    public Region save(Region regionSave) throws IOException {
         List<Region> regions = readJSON();
-        regions.add(new Region(id, name));
+        Region region = new Region(regionSave.getId(), regionSave.getName());
+        regions.add(region);
         writeJSON(regions);
+        return region;
     }
 
     @Override
-    public void update(Long id, String name) throws IOException {
-        deleteById(id);
-        save(id,name);
+    public Region update(Region region) throws IOException {
+        deleteById(region.getId());
+        save(region);
+        return region;
     }
 
     @Override
-    public void deleteById(Long id) throws IOException {
+    public boolean deleteById(Long id) throws IOException {
         List<Region> regions = readJSON();
         regions.removeIf(s -> s.getId().equals(id));
         writeJSON(regions);
+        return true;
     }
 
     private void writeJSON(List<Region> regions) throws IOException {

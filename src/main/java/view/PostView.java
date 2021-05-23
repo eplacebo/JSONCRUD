@@ -1,27 +1,25 @@
 package view;
 
-import controller.RegionController;
+import controller.PostController;
+import model.Post;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
-public class RegionView {
-    RegionController regionController = new RegionController();
+public class PostView {
+    PostController postController = new PostController();
     private Scanner scanner = new Scanner(System.in);
-    private List<model.Region> regions;
-    private model.Region region;
+    private List<Post> posts;
+    private Post post;
     MainMenu mainMenu = new MainMenu();
 
 
-    public void menuRegion() throws IOException, InterruptedException {
+    public void menuPost() throws IOException, InterruptedException {
 
 
-        System.out.println("   *******REGIONS*******");
+        System.out.println("   *******POST*******");
         System.out.println("Choose from these choices:\n" +
                 "1. Get by ID\n" +
                 "2. Delete by ID\n" +
@@ -49,7 +47,7 @@ public class RegionView {
                 getAll();
                 backToMenu();
             case (6):
-                mainMenu.getMainMenu();
+               mainMenu.getMainMenu();
             default:
                 System.out.println("Input error");
                 backToMenu();
@@ -58,39 +56,30 @@ public class RegionView {
 
     private void backToMenu() throws IOException, InterruptedException {
         TimeUnit.SECONDS.sleep(3);
-        menuRegion();
-    }
-
-    private void printResult(List<model.Region> regions) {
-        Collections.reverse(regions);
-        System.out.println(regions.stream()
-                .sorted(model.Region::compareTo)
-                .sorted(Comparator.reverseOrder())
-                .collect(Collectors.toList())
-                .toString().replace("[", "").replace(",", "").replace("]", "") + "\n");
+        menuPost();
     }
 
     public void getAll() throws IOException {
-        printResult(regionController.getAllRegions());
+        System.out.println(postController.getAllPosts().toString().replace("]", "").replace("[", "").replace(",",""));
     }
 
     public void getID() {
         System.out.println("Enter ID");
         long getID = scanner.nextLong();
         System.out.println();
-        if (regionController.getByIdRegion(getID) == null) {
+        if (postController.getByIdPost(getID) == null) {
             System.out.println("Not found");
-        } else System.out.println(regionController.getByIdRegion(getID) + "\n");
+        } else System.out.println(postController.getByIdPost(getID) + "\n");
     }
 
     public void deleteById() throws IOException {
         System.out.println("Enter ID");
         long getID = scanner.nextLong();
-        if (regionController.getByIdRegion(getID) == null) {
+        if (postController.getByIdPost(getID) == null) {
             System.out.println("Not found");
         } else {
-            regionController.deleteByIdRegion(getID);
-            System.out.println("\nRegion " + getID + " deleted\n");
+            postController.deleteByIdPost(getID);
+            System.out.println("\nPost " + getID + " deleted\n");
         }
     }
 
@@ -98,13 +87,13 @@ public class RegionView {
     public void save() throws IOException {
         System.out.println("Enter ID");
         long getID = scanner.nextLong();
-        if (regionController.getByIdRegion(getID) != null) {
-            System.out.println("Region with this ID already exists");
+        if (postController.getByIdPost(getID) != null) {
+            System.out.println("Post with this ID already exists");
         } else {
-            System.out.println("Enter name");
-            String getName = scanner.next();
-            regionController.saveRegion(getID, getName);
-            System.out.println("\nRegion saved\n");
+            System.out.println("Enter content");
+            String getContent = scanner.next();
+            postController.savePost(getID, getContent);
+            System.out.println("\nPost saved\n");
         }
     }
 
@@ -112,16 +101,15 @@ public class RegionView {
     public void update() throws IOException {
         System.out.println("Enter ID");
         Long getID = scanner.nextLong();
-        if (regionController.getByIdRegion(getID) == null) {
+        if (postController.getByIdPost(getID) == null) {
             System.out.println("Not found");
         } else {
-            System.out.println("Enter name");
-            String name = scanner.next();
-            regionController.updateRegion(getID, name);
-            System.out.println("\nRegion updated\n");
+            System.out.println("Enter content");
+            String content = scanner.next();
+            postController.update(getID, content);
+            System.out.println("\nPost updated\n");
         }
     }
 }
-
 
 
