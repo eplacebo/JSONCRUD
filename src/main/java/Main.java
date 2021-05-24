@@ -1,18 +1,14 @@
-import controller.WriterController;
-
-import java.io.IOException;
+import view.MainMenu;
 
 public class Main {
-    public static void main(String[] args) throws IOException, InterruptedException, NullPointerException {
-
-
-        WriterController asd = new WriterController();
-        System.out.println(asd.getAllWriters());
-
+    public static void main(String[] args) {
+        MainMenu menu = new MainMenu();
+        menu.getMainMenu();
 
 
 
     }
+
 }
 
 

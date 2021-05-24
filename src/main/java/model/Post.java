@@ -53,6 +53,6 @@ public class Post {
 
     @Override
     public String toString() {
-        return "\n" + id + " " + content + " " + "(" + created + ")" + " " + "(" + updated + ")";
+        return ("\n" + id + " " + content + " " + "(" + created + ")" + " " + "(" + updated + ")").replace("["," ");
     }
 }

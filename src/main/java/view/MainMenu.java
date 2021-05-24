@@ -1,13 +1,13 @@
 package view;
 
-import java.io.IOException;
 import java.util.Scanner;
 
 public class MainMenu {
 
-    public void getMainMenu() throws IOException, InterruptedException {
+    public void getMainMenu()  {
         PostView postView = new PostView();
         RegionView regionView =  new RegionView();
+        WriterView writerView = new WriterView();
 
 
         Scanner scanner = new Scanner(System.in);
@@ -22,7 +22,7 @@ public class MainMenu {
 
         switch (selection) {
             case (1):
-                break;
+                writerView.menuWritert();
             case (2):
                 postView.menuPost();
             case (3):

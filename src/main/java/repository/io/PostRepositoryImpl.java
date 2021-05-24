@@ -6,10 +6,7 @@ import com.google.gson.reflect.TypeToken;
 import model.Post;
 import repository.PostRepository;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Writer;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -33,7 +30,7 @@ public class PostRepositoryImpl implements PostRepository {
 
 
     @Override
-    public Post getById(Long id) throws IOException {
+    public Post getById(Long id) {
         return readJSON().stream()
                 .filter(u -> u.getId().equals(id))
                 .findFirst()
@@ -41,13 +38,12 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     @Override
-    public List<Post> getAll() throws IOException {
+    public List<Post> getAll() {
         return readJSON();
-
     }
 
     @Override
-    public Post update(Post postUpdate) throws IOException {
+    public Post update(Post postUpdate) {
         List<Post> posts = getAll().stream()
                 .peek(s -> {
                     if (s.getId().equals(postUpdate.getId())) {
@@ -61,8 +57,9 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     @Override
-    public boolean deleteById(Long id) throws IOException {
-        List<Post> posts = readJSON();
+    public boolean deleteById(Long id) {
+        List<Post> posts = null;
+        posts = readJSON();
         posts.removeIf(s -> s.getId().equals(id));
         writeJSON(posts);
         return true;
@@ -70,28 +67,36 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     @Override
-    public Post save(Post postSave) throws IOException {
-        List<Post> posts = readJSON();
+    public Post save(Post postSave) {
+        List<Post> posts = null;
+        posts = readJSON();
         Post post = new Post(postSave.getId(), postSave.getContent(), postSave.getCreated(), postSave.getUpdated());
         posts.add(post);
         writeJSON(posts);
         return post;
     }
 
-    private void writeJSON(List<Post> posts) throws IOException {
+    private void writeJSON(List<Post> posts) {
         try (Writer writer = Files.newBufferedWriter(Path.of(postFile), StandardCharsets.UTF_8)) {
             Gson gson = new Gson();
             gson.toJson(posts, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    private List<Post> readJSON() throws IOException {
+    private List<Post> readJSON() {
         try (BufferedReader reader = new BufferedReader(new FileReader(postFile))) {
             List<Post> posts = new ArrayList<>();
             posts = new GsonBuilder().create().fromJson(reader, new TypeToken<List<Post>>() {
             }.getType());
             return posts;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        return null;
     }
 
 

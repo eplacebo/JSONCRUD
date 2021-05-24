@@ -1,8 +1,8 @@
 package view;
 
 import controller.RegionController;
+import model.RegionIdComparator;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -11,16 +11,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class RegionView {
+
     RegionController regionController = new RegionController();
     private Scanner scanner = new Scanner(System.in);
-    private List<model.Region> regions;
-    private model.Region region;
+    Comparator orderLong = new RegionIdComparator();
     MainMenu mainMenu = new MainMenu();
 
 
-    public void menuRegion() throws IOException, InterruptedException {
-
-
+    public void menuRegion() {
         System.out.println("   *******REGIONS*******");
         System.out.println("Choose from these choices:\n" +
                 "1. Get by ID\n" +
@@ -56,21 +54,25 @@ public class RegionView {
         }
     }
 
-    private void backToMenu() throws IOException, InterruptedException {
-        TimeUnit.SECONDS.sleep(3);
-        menuRegion();
+    private void backToMenu() {
+        try {
+            TimeUnit.SECONDS.sleep(3);
+            menuRegion();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private void printResult(List<model.Region> regions) {
         Collections.reverse(regions);
         System.out.println(regions.stream()
-                .sorted(model.Region::compareTo)
-                .sorted(Comparator.reverseOrder())
+                .sorted(orderLong::compare)
+               // .sorted(Comparator.reverseOrder())
                 .collect(Collectors.toList())
                 .toString().replace("[", "").replace(",", "").replace("]", "") + "\n");
     }
 
-    public void getAll() throws IOException {
+    public void getAll() {
         printResult(regionController.getAllRegions());
     }
 
@@ -83,7 +85,7 @@ public class RegionView {
         } else System.out.println(regionController.getByIdRegion(getID) + "\n");
     }
 
-    public void deleteById() throws IOException {
+    public void deleteById() {
         System.out.println("Enter ID");
         long getID = scanner.nextLong();
         if (regionController.getByIdRegion(getID) == null) {
@@ -94,8 +96,7 @@ public class RegionView {
         }
     }
 
-
-    public void save() throws IOException {
+    public void save() {
         System.out.println("Enter ID");
         long getID = scanner.nextLong();
         if (regionController.getByIdRegion(getID) != null) {
@@ -109,7 +110,7 @@ public class RegionView {
     }
 
 
-    public void update() throws IOException {
+    public void update() {
         System.out.println("Enter ID");
         Long getID = scanner.nextLong();
         if (regionController.getByIdRegion(getID) == null) {

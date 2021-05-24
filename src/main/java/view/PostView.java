@@ -1,22 +1,18 @@
 package view;
 
 import controller.PostController;
-import model.Post;
 
-import java.io.IOException;
-import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 public class PostView {
     PostController postController = new PostController();
     private Scanner scanner = new Scanner(System.in);
-    private List<Post> posts;
-    private Post post;
+
     MainMenu mainMenu = new MainMenu();
 
 
-    public void menuPost() throws IOException, InterruptedException {
+    public void menuPost() {
 
 
         System.out.println("   *******POST*******");
@@ -47,19 +43,23 @@ public class PostView {
                 getAll();
                 backToMenu();
             case (6):
-               mainMenu.getMainMenu();
+                mainMenu.getMainMenu();
             default:
                 System.out.println("Input error");
                 backToMenu();
         }
     }
 
-    private void backToMenu() throws IOException, InterruptedException {
-        TimeUnit.SECONDS.sleep(3);
+    private void backToMenu() {
+        try {
+            TimeUnit.SECONDS.sleep(3);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         menuPost();
     }
 
-    public void getAll() throws IOException {
+    public void getAll() {
         System.out.println(postController.getAllPosts().toString().replace("]", "").replace("[", "").replace(",",""));
     }
 
@@ -72,7 +72,7 @@ public class PostView {
         } else System.out.println(postController.getByIdPost(getID) + "\n");
     }
 
-    public void deleteById() throws IOException {
+    public void deleteById() {
         System.out.println("Enter ID");
         long getID = scanner.nextLong();
         if (postController.getByIdPost(getID) == null) {
@@ -84,7 +84,7 @@ public class PostView {
     }
 
 
-    public void save() throws IOException {
+    public void save() {
         System.out.println("Enter ID");
         long getID = scanner.nextLong();
         if (postController.getByIdPost(getID) != null) {
@@ -98,7 +98,7 @@ public class PostView {
     }
 
 
-    public void update() throws IOException {
+    public void update() {
         System.out.println("Enter ID");
         Long getID = scanner.nextLong();
         if (postController.getByIdPost(getID) == null) {

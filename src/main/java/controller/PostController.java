@@ -1,30 +1,23 @@
 package controller;
 
 import model.Post;
+import repository.PostRepository;
 import repository.io.PostRepositoryImpl;
-
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
 
 public class PostController {
-    PostRepositoryImpl postController = new PostRepositoryImpl();
-
-    public List<Post> getAllPosts() throws IOException {
+    PostRepository postController = new PostRepositoryImpl();
+    public List<Post> getAllPosts() {
         return postController.getAll();
     }
 
     public Post getByIdPost(Long id) {
-        try {
-            return postController.getById(id);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return postController.getById(id);
     }
 
-    public boolean deleteByIdPost(Long id) throws IOException {
+    public boolean deleteByIdPost(Long id) {
         if (postController.getById(id) == null) {
             return false;
         } else {
@@ -33,7 +26,7 @@ public class PostController {
         }
     }
 
-    public Post savePost(Long id, String content) throws IOException {
+    public Post savePost(Long id, String content) {
         if (postController.getById(id) == null) {
             return postController.save(new Post(id, content, new Date(), new Date()));
         } else {
@@ -41,8 +34,7 @@ public class PostController {
         }
     }
 
-    public Post update(Long id, String content) throws IOException {
-
+    public Post update(Long id, String content) {
         return postController.update(new Post(id, content, new Date(), new Date()));
     }
 }

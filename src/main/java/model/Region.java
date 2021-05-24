@@ -1,6 +1,6 @@
 package model;
 
-public class Region implements Comparable <Region>{
+public class Region { // implements Comparable <Region>{
 
     private Long id;
     private String name;
@@ -31,12 +31,12 @@ public class Region implements Comparable <Region>{
 
     @Override
     public String toString() {
-        return "\n"+id+" "+name;
+        return "\n" + id + " " + name;
     }
-
+/*
     @Override
     public int compareTo(Region region) {
-        return (int) (region.getId() - this.getId());
-    }
+        return (int) (region.getId() - this.getId());*/
 }
+
 

@@ -7,23 +7,19 @@ import model.Writer;
 import repository.WriterRepository;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class WriterRepositoryImpl implements WriterRepository {
 
     private final String writerFile = "src/main/resources/writers.json";
-
     private static WriterRepositoryImpl writerRepositoryImpl;
-    private static PostRepositoryImpl postRepositoryImpl;
-    private static RegionRepositoryImpl regionRepositoryImpl;
-
 
     public static WriterRepositoryImpl getWriterRepositoryImpl() {
         if (writerRepositoryImpl == null) {
@@ -33,7 +29,7 @@ public class WriterRepositoryImpl implements WriterRepository {
     }
 
     @Override
-    public Writer getById(Long id) throws IOException {
+    public Writer getById(Long id) {
         return readJSON().stream()
                 .filter(u -> u.getId().equals(id))
                 .findFirst()
@@ -41,13 +37,12 @@ public class WriterRepositoryImpl implements WriterRepository {
     }
 
     @Override
-    public List<Writer> getAll() throws IOException {
+    public List<Writer> getAll() {
         return readJSON();
-
     }
 
     @Override
-    public Writer update(Writer writerUpdate) throws IOException {
+    public Writer update(Writer writerUpdate) {
         List<Writer> writers = getAll().stream()
                 .peek(s -> {
                     if (s.getId().equals(writerUpdate.getId())) {
@@ -63,7 +58,7 @@ public class WriterRepositoryImpl implements WriterRepository {
     }
 
     @Override
-    public boolean deleteById(Long id) throws IOException {
+    public boolean deleteById(Long id) {
         List<Writer> writers = readJSON();
         writers.removeIf(s -> s.getId().equals(id));
         writeJSON(writers);
@@ -72,24 +67,34 @@ public class WriterRepositoryImpl implements WriterRepository {
     }
 
     @Override
-    public Writer save(Writer writerSave) throws IOException {
-
-
+    public Writer save(Writer writerSave) {
+        List<Writer> writers = null;
+        writers = readJSON();
+        Writer writer = new Writer(writerSave.getId(), writerSave.getFirstName(), writerSave.getLastName(), writerSave.getPosts(), writerSave.getRegion());
+        writers.add(writer);
+        writeJSON(writers);
+        return writer;
     }
 
-    private void writeJSON(List<Writer> writers) throws IOException {
+    private void writeJSON(List<Writer> writers) {
         try (java.io.Writer writer = Files.newBufferedWriter(Path.of(writerFile), StandardCharsets.UTF_8)) {
             Gson gson = new Gson();
             gson.toJson(writers, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    private List<model.Writer> readJSON() throws IOException {
+    private List<model.Writer> readJSON() {
         try (BufferedReader reader = new BufferedReader(new FileReader(writerFile))) {
-            List<Writer> writers = new ArrayList<>();
-            writers = new GsonBuilder().create().fromJson(reader, new TypeToken<List<Writer>>() {
+            List<Writer> writers = new GsonBuilder().create().fromJson(reader, new TypeToken<List<Writer>>() {
             }.getType());
             return writers;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        return null;
     }
 }

@@ -12,7 +12,6 @@ public class Writer {
     private List<Post> posts;
     private Region region;
 
-    public Writer(){}
 
     public Writer(Long id, String firstName, String lastName, List<Post> posts, Region region) {
         this.id = id;
@@ -64,12 +63,9 @@ public class Writer {
 
     @Override
     public String toString() {
-        return "Writer{" +
-                "id=" + id +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", posts=" + posts +
-                ", region=" + region +
-                '}';
+        return "\n" + "Writer: " +"\n" +"id " + id + ", firstName " + firstName  + " lastName " + lastName +
+                "\nRegion: " + region +
+                "\nPosts: " + posts+"\n";
+
     }
 }

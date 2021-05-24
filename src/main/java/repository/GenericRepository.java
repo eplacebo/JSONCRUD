@@ -1,17 +1,16 @@
 package repository;
 
-import java.io.IOException;
 import java.util.List;
 
 public interface GenericRepository<T,ID> {
 
-    T getById(ID id) throws IOException;
+    T getById(ID id);
 
-    List<T> getAll() throws IOException;
+    List<T> getAll();
 
-    T update(T t) throws IOException;
+    T update(T t);
 
-    boolean deleteById(ID id) throws IOException;
+    boolean deleteById(ID id);
 
-    T save(T t) throws IOException;
+    T save(T t);
 }

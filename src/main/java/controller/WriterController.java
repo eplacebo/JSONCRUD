@@ -1,32 +1,39 @@
 package controller;
 
 import model.Post;
-import model.Region;
 import model.Writer;
+import repository.PostRepository;
+import repository.RegionRepository;
+import repository.WriterRepository;
+import repository.io.PostRepositoryImpl;
 import repository.io.RegionRepositoryImpl;
 import repository.io.WriterRepositoryImpl;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class WriterController {
-    WriterRepositoryImpl writerRepository = new WriterRepositoryImpl();
-    RegionRepositoryImpl regionRepository = new RegionRepositoryImpl();
+    WriterRepository writerRepository = new WriterRepositoryImpl();
+    RegionRepository regionRepository = new RegionRepositoryImpl();
+    PostRepository postRepository = new PostRepositoryImpl();
 
-    public List<Writer> getAllWriters() throws IOException {
+    public List<Writer> getAllWriters() {
         return writerRepository.getAll();
     }
 
-    public Writer getByIdWriter(Long id) {
-        try {
-            return writerRepository.getById(id);
-        } catch (IOException e) {
-            e.printStackTrace();
+    public Writer updateWriter(Long id, String firstName, String lastName, String idPost, Long idRegion) {
+        if (writerRepository.getById(id) != null) {
+            writerRepository.deleteById(id);
+            return writerRepository.save(new Writer(id, firstName, lastName, getPostsById(idPost), regionRepository.getById(idRegion)));
         }
         return null;
     }
 
-    public boolean deleteByIdWriter(Long id) throws IOException {
+    public Writer getByIdWriter(Long id) {
+        return writerRepository.getById(id);
+    }
+
+    public boolean deleteByIdWriter(Long id) {
         if (writerRepository.getById(id) == null) {
             return false;
         } else {
@@ -35,21 +42,32 @@ public class WriterController {
         }
     }
 
-    public Writer saveWriter(Writer writer) throws IOException {
-        writer = writerRepository.save(writer);
-     /*   if (writerRepository.getById(id) == null) {
-            return writerRepository.save(new Writer(id, firstName, lastName, posts, region));
-        } else {
-            return null;
-        }*/
+    public Writer saveWriter(Long id, String firstName, String lastName, String idPost, Long idRegion) {
+        if (writerRepository.getById(id) == null) {
+            return writerRepository.save(new Writer(id, firstName, lastName, getPostsById(idPost), regionRepository.getById(idRegion)));
+        }
+        return null;
     }
 
-    public Writer update(Long id, String firstName, String lastName, List<Post> posts, Region region) throws IOException {
+    public List<Post> getPostsById(String posts) {
+        List<Post> resultPost = new ArrayList<>();
+        List<Post> postList = postRepository.getAll();
 
-        return writerRepository.update(new Writer(id, firstName, lastName, posts, region));
+        String items[] = posts.split(",");
+        Long ent[] = new Long[items.length];
+        for (int i = 0; i < items.length; i++) {
+            try {
+                ent[i] = Long.parseLong(items[i]);
+            } catch (NumberFormatException e) {
+            }
+        }
+
+        for (int i = 0; i < ent.length; i++) {
+            resultPost.add(postRepository.getById(ent[i]));
+        }
+        return resultPost;
     }
 }
-
 
 
 
