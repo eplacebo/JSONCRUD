@@ -60,10 +60,6 @@ public class RegionRepositoryImpl implements RegionRepository {
                 .collect(Collectors.toList());
         writeJSON(regions);
         return region;
-       /*
-        deleteById(region.getId());
-        save(region);
-        return region;*/
     }
 
     @Override

@@ -67,7 +67,6 @@ public class RegionView {
         Collections.reverse(regions);
         System.out.println(regions.stream()
                 .sorted(orderLong::compare)
-               // .sorted(Comparator.reverseOrder())
                 .collect(Collectors.toList())
                 .toString().replace("[", "").replace(",", "").replace("]", "") + "\n");
     }
